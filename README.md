@@ -58,25 +58,47 @@ Captions are generated with **beam search** (5 beams) and a repetition penalty f
 
 ```
 ├── AI_Image_Caption_Generator.ipynb   # Main Colab notebook
-├── sample_images/                     # Images used for testing
-├── image_caption_results.csv          # Example output
+├── Sample_images/                     # Six photos used for testing
+│   └── README.md                      # What each photo is
+├── image_caption_results.csv          # Example output for those six photos
 └── README.md
 ```
 
+### Two kinds of sample images
+
+- **Built-in demo images.** If you skip the upload cell, the notebook downloads three pictures from the COCO dataset (two cats, a room and a bedroom). This needs internet access from Colab.
+- **`Sample_images/` folder.** Six photos you can download and upload yourself. `image_caption_results.csv` was made by running these six.
+
+## ⚙️ Settings in the notebook
+
+| Setting | Default | Where |
+|---|---|---|
+| Beam search | 5 beams (at least as many as the captions you ask for) | `generate_caption` |
+| Repetition penalty | 1.3 | `generate_caption` |
+| Maximum caption length | 40 new tokens | `generate_caption` |
+| Object confidence threshold | 0.85 (detections below 85% are dropped) | `detect_objects` |
+| Prompt-guided examples | "a photography of", "a picture showing", "this is an image of" | the alternative-captions cell |
+
+DETR is loaded with `revision="no_timm"`, which avoids needing the `timm` package. If the detector fails to load, the notebook prints a warning and carries on with captions only.
+
 ## 📊 Sample Output
 
-Add your screenshots after running the notebook:
+`image_caption_results.csv` holds the results for the six images in `Sample_images/`:
 
-```
-![Caption result 1](images/result1.png)
-![Caption result 2](images/result2.png)
-```
+| Image | Caption |
+|---|---|
+| sample_china_temple.jpg | The pagoda tower at the top of the hill. |
+| sample_flower.jpg | Two orange flowers with green leaves in the background. |
+| sample_rocket.jpg | A spacex rocket is seen on the launch pad. |
+| sample_coffee.jpg | A cup of coffee on a wooden table. |
+| sample_astronaut.jpg | A astronaut with his space suit. |
+| sample_cat.jpg | A close up of a cat with green eyes. |
 
-Example format:
+The CSV columns are **No, Image, Caption, Objects Detected, Object Count**.
 
-| Image | Caption | Objects Detected |
-|---|---|---|
-| your_image.jpg | *(generated caption)* | *(detected objects)* |
+> **Note on the saved results:** in this file every image shows `none detected` and a count of 0, even the cat photo. A cat is one of the 80 COCO categories DETR knows, so this most likely means the detector did not load in that run and the notebook continued with captions only. If you run the notebook yourself, check the model-loading cell for the line `✅ DETR object detector loaded`. If it shows the warning instead, the Objects column will be empty.
+
+The notebook also draws each image with green bounding boxes and labels for the objects it finds. Screenshots are not in the repository yet.
 
 ## ⚠️ Limitations
 
